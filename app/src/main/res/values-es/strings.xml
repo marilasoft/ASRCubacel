@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ASR Cubacel</string>
+    <string name="title_activity_home">HomeActivity</string>
+    <string name="title_account">Cuenta</string>
+    <string name="title_data">Datos</string>
+    <string name="title_store">Tienda</string>
+    <string name="title_settings">Ajustes</string>
+    <string name="remaining_credit">Saldo:</string>
+    <string name="remaining_bonus_bonus">Bono Saldo</string>
+    <string name="expire_service">Su línea expira el:</string>
+    <string name="expire_bonus">El bono expira el:</string>
+    <string name="bonus_services">Tarifa por consumo</string>
+    <string name="recharge">Recargar</string>
+    <string name="hint_recharge_code">0000 0000 0000 0000</string>
+    <string name="transfer">Transferir</string>
+    <string name="hint_trnasfer_mount">0.00</string>
+    <string name="cuc">CUC</string>
+    <string name="_53">+53</string>
+    <string name="hint_phone_number">5 000 00 00</string>
+    <string name="advance_balance">Adelanta Saldo</string>
+    <string name="date">Fecha del adelanto:</string>
+    <string name="payable_balance">Saldo por pagar:</string>
+    <string name="accept_loan_conditions">Acepto las Condiciones del Servicio \'Advance Balance\'</string>
+    <string name="request">Solicitar</string>
+    <string name="friends_and_family">Plan Amigos</string>
+    <string name="friends_and_family_info">Ahora puedes llamar a tus amigos y familiares a una tarifa preferencial.</string>
+    <string name="no_free_ff">No. de cambios libre de costos:</string>
+    <string name="deactivate">Desactivar</string>
+    <string name="phone_number_one">Número de teléfono 1</string>
+    <string name="phone_number_two">Número de teléfonor 2</string>
+    <string name="phone_number_three">Número de teléfono 3</string>
+
+    <string name="description">Descripción</string>
+    <string name="cd_expire_date">Expira el: </string>
+
+    <string name="buy">Comprar</string>
+    <string name="most_info">Más Info</string>
+
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="continue_with_cubacel">Continua con Cubacel</string>
+    <string name="or">o</string>
+    <string name="sign_up_with_your_phone_number">Registrese con su número de teléfono</string>
+    <string name="sign_in_with_cubacel_account">Inicie sesión con su cuenta Cubacel</string>
+    <string name="forgot_your_password">Olvidó su contraseña?</string>
+    <string name="sign_in">Entrar</string>
+    <string name="phone_number">Número de teléfono</string>
+    <string name="code_rp_info">Cubacel le enviará un código de 4 dígitos</string>
+    <string name="new_password">Nueva contraseña</string>
+    <string name="repeat_new_password">Repite la nueva contraseña</string>
+    <string name="finish">Finalizar</string>
+
+    <string name="please_wait">Por favo, espere…</string>
+    <string name="logging_in">Iniciando sesión…</string>
+
+    <string name="error_phone_number">El número de teléfono debe ser de 8 dígitos.</string>
+    <string name="error_code_receiver">El código debe ser de 4 dígitos.</string>
+    <string name="error_password">La contraseña no debe tener menos de 6 caracteres.</string>
+    <string name="passwords_do_not_match">Las contraseñas no coinciden.</string>
+    <string name="input_required">Este campo es requerido.</string>
+    <string name="first_name">Nombre</string>
+    <string name="last_name">Apellidos</string>
+    <string name="email">Correo Electronico</string>
+    <string name="continue_string">Continuar</string>
+    <string name="create_password">Crea una contraseña</string>
+</resources>

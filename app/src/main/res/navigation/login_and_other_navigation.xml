@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/login_and_other_navigation"
+    app:startDestination="@id/splashFragment">
+
+    <fragment
+        android:id="@+id/splashFragment"
+        android:name="cu.marilasoft.asrcubacel.SplashFragment"
+        android:label="fragment_splash"
+        tools:layout="@layout/fragment_splash" >
+        <action
+            android:id="@+id/to_login_and_others"
+            app:destination="@id/loginAndOthersFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+    </fragment>
+    <fragment
+        android:id="@+id/loginAndOthersFragment"
+        android:name="cu.marilasoft.asrcubacel.LoginAndOthersFragment"
+        android:label="fragment_login_and_others"
+        tools:layout="@layout/fragment_login_and_others" >
+        <action
+            android:id="@+id/to_sign_up"
+            app:destination="@id/loginFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+    </fragment>
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="cu.marilasoft.asrcubacel.ui.login.LoginFragment"
+        android:label="fragment_login"
+        tools:layout="@layout/fragment_login" >
+        <action
+            android:id="@+id/to_reset_password"
+            app:destination="@id/forgotStepOneFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+        <action
+            android:id="@+id/to_sign_up"
+            app:destination="@id/signUpStepOneFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+    </fragment>
+    <fragment
+        android:id="@+id/forgotStepOneFragment"
+        android:name="cu.marilasoft.asrcubacel.ui.forgot.ForgotStepOneFragment"
+        android:label="fragment_forgot_step_one"
+        tools:layout="@layout/fragment_forgot_step_one" >
+        <action
+            android:id="@+id/to_reset_step_two"
+            app:destination="@id/forgotStepTwoFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+    </fragment>
+    <fragment
+        android:id="@+id/forgotStepTwoFragment"
+        android:name="cu.marilasoft.asrcubacel.ui.forgot.ForgotStepTwoFragment"
+        android:label="fragment_forgot_step_two"
+        tools:layout="@layout/fragment_forgot_step_two" >
+        <argument
+            android:name="sessionId"
+            app:argType="string"
+            android:defaultValue="0" />
+        <action
+            android:id="@+id/from_reset_to_result"
+            app:destination="@id/operationResultFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+        <argument
+            android:name="phoneNumber"
+            app:argType="string"
+            android:defaultValue="0" />
+    </fragment>
+    <fragment
+        android:id="@+id/operationResultFragment"
+        android:name="cu.marilasoft.asrcubacel.OperationResultFragment"
+        android:label="fragment_operation_result"
+        tools:layout="@layout/fragment_operation_result" >
+        <argument
+            android:name="phoneNumer"
+            app:argType="string"
+            android:defaultValue="0" />
+        <argument
+            android:name="password"
+            app:argType="string"
+            android:defaultValue="0" />
+    </fragment>
+    <fragment
+        android:id="@+id/signUpStepOneFragment"
+        android:name="cu.marilasoft.asrcubacel.ui.signUp.SignUpStepOneFragment"
+        android:label="fragment_sign_up_step_one"
+        tools:layout="@layout/fragment_sign_up_step_one" >
+        <action
+            android:id="@+id/to_sign_up_two"
+            app:destination="@id/signUpStepTwoFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+    </fragment>
+    <fragment
+        android:id="@+id/signUpStepThreeFragment"
+        android:name="cu.marilasoft.asrcubacel.ui.signUp.SignUpStepThreeFragment"
+        android:label="fragment_sign_up_step_three"
+        tools:layout="@layout/fragment_sign_up_step_three" >
+        <action
+            android:id="@+id/from_sign_up_to_result"
+            app:destination="@id/operationResultFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+        <argument
+            android:name="phoneNumber"
+            app:argType="string"
+            android:defaultValue="0" />
+    </fragment>
+    <fragment
+        android:id="@+id/signUpStepTwoFragment"
+        android:name="cu.marilasoft.asrcubacel.ui.signUp.SignUpStepTwoFragment"
+        android:label="fragment_sign_up_step_two"
+        tools:layout="@layout/fragment_sign_up_step_two" >
+        <action
+            android:id="@+id/to_sign_up_three"
+            app:destination="@id/signUpStepThreeFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+        <argument
+            android:name="phoneNumber"
+            app:argType="string"
+            android:defaultValue="0" />
+    </fragment>
+</navigation>
