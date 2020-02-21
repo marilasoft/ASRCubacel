@@ -5,15 +5,16 @@ import android.content.Context
 import android.content.Intent
 import android.os.AsyncTask
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import cu.marilasoft.asrcubacel.HomeActivity
-
 import cu.marilasoft.asrcubacel.R
-import cu.marilasoft.asrcubacel.lib.MCPortalCommunicator
+import cu.marilasoft.asrcubacel.lib.Communicator
+import cu.marilasoft.asrcubacel.lib.SharedApp
+import cu.marilasoft.selibrary.MCPortal
 import cu.marilasoft.selibrary.utils.CommunicationException
 import cu.marilasoft.selibrary.utils.LoginException
 import kotlinx.android.synthetic.main.fragment_login.*
@@ -25,7 +26,7 @@ import java.security.NoSuchAlgorithmException
  */
 class LoginFragment : Fragment() {
     lateinit var mContext: Context
-    lateinit var phoneNumber: String
+    lateinit var phoneNumberInput: String
     lateinit var password: String
 
     override fun onCreateView(
@@ -50,11 +51,12 @@ class LoginFragment : Fragment() {
             if (et_phone_number.text.toString().isEmpty()
                 || et_phone_number.text.toString().length < 8
                 || (!et_phone_number.text.toString().startsWith("5"))
-                && !et_phone_number.text.toString().startsWith("6")) {
+                && !et_phone_number.text.toString().startsWith("6")
+            ) {
                 et_phone_number.error = getString(R.string.error_phone_number)
                 error = true
             }
-            if (et_password.text.toString().isEmpty())  {
+            if (et_password.text.toString().isEmpty()) {
                 et_password.error = getString(R.string.input_required)
                 error = true
             } else if (et_password.text.toString().length < 6) {
@@ -62,7 +64,7 @@ class LoginFragment : Fragment() {
                 error = true
             }
             if (!error) {
-                phoneNumber = et_phone_number.text.toString()
+                phoneNumberInput = et_phone_number.text.toString()
                 password = et_password.text.toString()
                 RunTask(mContext).execute()
             }
@@ -70,7 +72,7 @@ class LoginFragment : Fragment() {
     }
 
     inner class RunTask(override var mContext: Context) : AsyncTask<Void?, Void?, Void?>(),
-        MCPortalCommunicator {
+        Communicator, MCPortal {
         private val progressDialog = customProgressBar
         lateinit var errorMessage: String
         private var runError = false
@@ -83,7 +85,10 @@ class LoginFragment : Fragment() {
         override fun doInBackground(vararg params: Void?): Void? {
             try {
                 enableSSLSocket()
-                login(phoneNumber, password)
+                login(phoneNumberInput, password)
+                SharedApp.prefs.portalUser = cookies["portaluser"].toString()
+                SharedApp.prefs.urlMyAccount = urls["myAccount"].toString()
+                SharedApp.prefs.urlProducts = urls["products"].toString()
             } catch (e: KeyManagementException) {
                 e.printStackTrace()
             } catch (e2: NoSuchAlgorithmException) {

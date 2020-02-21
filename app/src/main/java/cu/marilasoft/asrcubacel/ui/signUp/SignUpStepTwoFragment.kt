@@ -12,17 +12,18 @@ import android.os.AsyncTask
 import android.os.Bundle
 import android.telephony.SmsMessage
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-
 import cu.marilasoft.asrcubacel.R
-import cu.marilasoft.asrcubacel.lib.MCPortalCommunicator
+import cu.marilasoft.asrcubacel.lib.Communicator
+import cu.marilasoft.selibrary.MCPortal
 import cu.marilasoft.selibrary.utils.CommunicationException
+import cu.marilasoft.selibrary.utils.OperationException
 import kotlinx.android.synthetic.main.fragment_sign_up_step_two.*
 import java.security.KeyManagementException
 import java.security.NoSuchAlgorithmException
@@ -32,9 +33,8 @@ import java.security.NoSuchAlgorithmException
  */
 class SignUpStepTwoFragment : Fragment() {
     lateinit var mContext: Context
-    private val cookies = HashMap<String, String>()
     lateinit var sessionId: String
-    lateinit var phoneNumber: String
+    lateinit var phoneNumberInput: String
     lateinit var mActivity: Activity
     lateinit var code: String
 
@@ -50,9 +50,8 @@ class SignUpStepTwoFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         mContext = context as Context
         mActivity = activity as Activity
-        phoneNumber = SignUpStepTwoFragmentArgs.fromBundle(arguments!!).phoneNumber
-        sessionId = ""
-        cookies["JSESSIONID"] = sessionId
+        phoneNumberInput = SignUpStepTwoFragmentArgs.fromBundle(arguments!!).phoneNumber
+        sessionId = SignUpStepTwoFragmentArgs.fromBundle(arguments!!).sessionId
         val permissionCheck = ContextCompat.checkSelfPermission(
             mContext, Manifest.permission.RECEIVE_SMS
         )
@@ -87,7 +86,7 @@ class SignUpStepTwoFragment : Fragment() {
     }
 
     inner class RunTask(override var mContext: Context) : AsyncTask<Void?, Void?, Void?>(),
-        MCPortalCommunicator {
+        Communicator, MCPortal {
         private val progressDialog = customProgressBar
         lateinit var errorMessage: String
         private var runError = false
@@ -100,12 +99,17 @@ class SignUpStepTwoFragment : Fragment() {
         override fun doInBackground(vararg params: Void?): Void? {
             try {
                 enableSSLSocket()
+                cookies["JSESSIONID"] = sessionId
                 verifyCode(code, cookies)
             } catch (e: KeyManagementException) {
                 e.printStackTrace()
             } catch (e2: NoSuchAlgorithmException) {
                 e2.printStackTrace()
             } catch (e: CommunicationException) {
+                e.printStackTrace()
+                runError = true
+                errorMessage = e.message.toString()
+            } catch (e: OperationException) {
                 e.printStackTrace()
                 runError = true
                 errorMessage = e.message.toString()
@@ -120,9 +124,9 @@ class SignUpStepTwoFragment : Fragment() {
                 showAlertDialog(errorMessage)
                 et_code.isEnabled = true
                 et_code.setText("")
-            }
-            else {
-                val action = SignUpStepTwoFragmentDirections.toSignUpThree(phoneNumber)
+            } else {
+                val action =
+                    SignUpStepTwoFragmentDirections.toSignUpThree(phoneNumberInput, sessionId)
                 findNavController().navigate(action)
             }
         }

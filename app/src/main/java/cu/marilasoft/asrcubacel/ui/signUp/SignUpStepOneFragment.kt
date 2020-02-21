@@ -10,8 +10,10 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import cu.marilasoft.asrcubacel.R
-import cu.marilasoft.asrcubacel.lib.MCPortalCommunicator
+import cu.marilasoft.asrcubacel.lib.Communicator
+import cu.marilasoft.selibrary.MCPortal
 import cu.marilasoft.selibrary.utils.CommunicationException
+import cu.marilasoft.selibrary.utils.OperationException
 import kotlinx.android.synthetic.main.fragment_sign_up_step_one.*
 import java.security.KeyManagementException
 import java.security.NoSuchAlgorithmException
@@ -20,7 +22,7 @@ import java.security.NoSuchAlgorithmException
  * A simple [Fragment] subclass.
  */
 class SignUpStepOneFragment : Fragment() {
-    lateinit var phoneNumber: String
+    lateinit var phoneNumberInput: String
     lateinit var firstName: String
     lateinit var lastName: String
     lateinit var email: String
@@ -55,7 +57,7 @@ class SignUpStepOneFragment : Fragment() {
                 error = true
             }
             if (!error) {
-                phoneNumber = et_phone_number.text.toString()
+                phoneNumberInput = et_phone_number.text.toString()
                 firstName = et_first_name.text.toString()
                 lastName = et_last_name.text.toString()
                 email = et_email_address.text.toString()
@@ -65,7 +67,7 @@ class SignUpStepOneFragment : Fragment() {
     }
 
     inner class RunTask(override var mContext: Context) : AsyncTask<Void?, Void?, Void?>(),
-        MCPortalCommunicator {
+        Communicator, MCPortal {
         private val progressDialog = customProgressBar
         lateinit var errorMessage: String
         lateinit var sessionId: String
@@ -79,12 +81,16 @@ class SignUpStepOneFragment : Fragment() {
         override fun doInBackground(vararg params: Void?): Void? {
             try {
                 enableSSLSocket()
-                sessionId = signUp(phoneNumber, firstName, lastName, email)
+                signUp(phoneNumberInput, firstName, lastName, email)
             } catch (e: KeyManagementException) {
                 e.printStackTrace()
             } catch (e2: NoSuchAlgorithmException) {
                 e2.printStackTrace()
             } catch (e: CommunicationException) {
+                e.printStackTrace()
+                runError = true
+                errorMessage = e.message.toString()
+            } catch (e: OperationException) {
                 e.printStackTrace()
                 runError = true
                 errorMessage = e.message.toString()
@@ -97,7 +103,10 @@ class SignUpStepOneFragment : Fragment() {
             if (progressDialog.dialog.isShowing) progressDialog.dialog.dismiss()
             if (runError) showAlertDialog(errorMessage)
             else {
-                val action = SignUpStepOneFragmentDirections.toSignUpTwo(phoneNumber)
+                val action = SignUpStepOneFragmentDirections.toSignUpTwo(
+                    phoneNumberInput,
+                    cookies["JSESSIONID"].toString()
+                )
                 findNavController().navigate(action)
             }
         }

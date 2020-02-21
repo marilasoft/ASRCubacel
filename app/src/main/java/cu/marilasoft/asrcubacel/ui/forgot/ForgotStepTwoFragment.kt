@@ -12,17 +12,18 @@ import android.os.AsyncTask
 import android.os.Bundle
 import android.telephony.SmsMessage
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-
 import cu.marilasoft.asrcubacel.R
-import cu.marilasoft.asrcubacel.lib.MCPortalCommunicator
+import cu.marilasoft.asrcubacel.lib.Communicator
+import cu.marilasoft.selibrary.MCPortal
 import cu.marilasoft.selibrary.utils.CommunicationException
+import cu.marilasoft.selibrary.utils.OperationException
 import kotlinx.android.synthetic.main.fragment_forgot_step_two.*
 import java.security.KeyManagementException
 import java.security.NoSuchAlgorithmException
@@ -34,10 +35,10 @@ class ForgotStepTwoFragment : Fragment() {
 
     lateinit var mContext: Context
     lateinit var mActivity: Activity
-    lateinit var phoneNumber: String
+    lateinit var phoneNumberInput: String
     lateinit var code: String
     lateinit var newPassword: String
-    val cookies = HashMap<String, String>()
+    lateinit var sessionId: String
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -52,8 +53,8 @@ class ForgotStepTwoFragment : Fragment() {
         mContext = context as Context
         mActivity = activity as Activity
 
-        cookies["JSESSIONID"] = ForgotStepTwoFragmentArgs.fromBundle(arguments!!).sessionId
-        phoneNumber = ForgotStepTwoFragmentArgs.fromBundle(arguments!!).phoneNumber
+        sessionId = ForgotStepTwoFragmentArgs.fromBundle(arguments!!).sessionId
+        phoneNumberInput = ForgotStepTwoFragmentArgs.fromBundle(arguments!!).phoneNumber
 
         val permissionCheck = ContextCompat.checkSelfPermission(
             mContext, Manifest.permission.RECEIVE_SMS
@@ -87,8 +88,7 @@ class ForgotStepTwoFragment : Fragment() {
             if (repeatPassword.isEmpty()) {
                 et_repeat_password.error = getString(R.string.input_required)
                 error = true
-            }
-            else if (repeatPassword != newPassword) {
+            } else if (repeatPassword != newPassword) {
                 et_repeat_password.error = getString(R.string.passwords_do_not_match)
                 error = true
             }
@@ -98,7 +98,8 @@ class ForgotStepTwoFragment : Fragment() {
         }
     }
 
-    inner class RunTask(override var mContext: Context) : AsyncTask<Void?, Void?, Void?>(), MCPortalCommunicator {
+    inner class RunTask(override var mContext: Context) : AsyncTask<Void?, Void?, Void?>(),
+        Communicator, MCPortal {
         private val progressDialog = customProgressBar
         lateinit var errorMessage: String
         private var runError = false
@@ -111,12 +112,17 @@ class ForgotStepTwoFragment : Fragment() {
         override fun doInBackground(vararg params: Void?): Void? {
             try {
                 enableSSLSocket()
+                cookies["JSESSIONID"] = sessionId
                 completeResetPassword(code, newPassword, cookies)
             } catch (e: KeyManagementException) {
                 e.printStackTrace()
             } catch (e2: NoSuchAlgorithmException) {
                 e2.printStackTrace()
             } catch (e: CommunicationException) {
+                e.printStackTrace()
+                runError = true
+                errorMessage = e.message.toString()
+            } catch (e: OperationException) {
                 e.printStackTrace()
                 runError = true
                 errorMessage = e.message.toString()
@@ -129,7 +135,10 @@ class ForgotStepTwoFragment : Fragment() {
             if (progressDialog.dialog.isShowing) progressDialog.dialog.dismiss()
             if (runError) showAlertDialog(errorMessage)
             else {
-                val action = ForgotStepTwoFragmentDirections.fromResetToResult(phoneNumber, newPassword)
+                val action = ForgotStepTwoFragmentDirections.fromResetToResult(
+                    phoneNumberInput,
+                    newPassword
+                )
                 findNavController().navigate(action)
             }
         }

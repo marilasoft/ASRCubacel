@@ -4,14 +4,16 @@ package cu.marilasoft.asrcubacel.ui.signUp
 import android.content.Context
 import android.os.AsyncTask
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-
+import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import cu.marilasoft.asrcubacel.R
-import cu.marilasoft.asrcubacel.lib.MCPortalCommunicator
+import cu.marilasoft.asrcubacel.lib.Communicator
+import cu.marilasoft.selibrary.MCPortal
 import cu.marilasoft.selibrary.utils.CommunicationException
+import cu.marilasoft.selibrary.utils.OperationException
 import kotlinx.android.synthetic.main.fragment_sign_up_step_three.*
 import kotlinx.android.synthetic.main.fragment_sign_up_step_three.view.*
 import java.security.KeyManagementException
@@ -22,9 +24,8 @@ import java.security.NoSuchAlgorithmException
  */
 class SignUpStepThreeFragment : Fragment() {
     lateinit var mContext: Context
-    private val cookies = HashMap<String, String>()
     lateinit var sessionId: String
-    lateinit var phoneNumber: String
+    lateinit var phoneNumberInput: String
     lateinit var password: String
 
     override fun onCreateView(
@@ -38,7 +39,8 @@ class SignUpStepThreeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mContext = context as Context
-        phoneNumber = SignUpStepThreeFragmentArgs.fromBundle(arguments!!).phoneNumber
+        phoneNumberInput = SignUpStepThreeFragmentArgs.fromBundle(arguments!!).phoneNumber
+        sessionId = SignUpStepThreeFragmentArgs.fromBundle(arguments!!).sessionId
 
         ib_finish.setOnClickListener {
             var error = false
@@ -49,19 +51,19 @@ class SignUpStepThreeFragment : Fragment() {
             if (et_repeat_password.text.toString().isEmpty()) {
                 et_repeat_password.error = getString(R.string.input_required)
                 error = true
-            }
-            else if (et_repeat_password.text.toString() != et_new_password.text.toString()) {
+            } else if (et_repeat_password.text.toString() != et_new_password.text.toString()) {
                 et_repeat_password.error = getString(R.string.passwords_do_not_match)
                 error = true
             }
-            if (!error){
+            if (!error) {
                 password = et_new_password.et_new_password.text.toString()
                 RunTask(mContext).execute()
             }
         }
     }
 
-    inner class RunTask(override var mContext: Context) : AsyncTask<Void?, Void?, Void?>(), MCPortalCommunicator {
+    inner class RunTask(override var mContext: Context) : AsyncTask<Void?, Void?, Void?>(),
+        Communicator, MCPortal {
         private val progressDialog = customProgressBar
         lateinit var errorMessage: String
         private var runError = false
@@ -74,12 +76,17 @@ class SignUpStepThreeFragment : Fragment() {
         override fun doInBackground(vararg params: Void?): Void? {
             try {
                 enableSSLSocket()
+                cookies["JSESSIONID"] = sessionId
                 completeSignUp(password, cookies)
             } catch (e: KeyManagementException) {
                 e.printStackTrace()
             } catch (e2: NoSuchAlgorithmException) {
                 e2.printStackTrace()
             } catch (e: CommunicationException) {
+                e.printStackTrace()
+                runError = true
+                errorMessage = e.message.toString()
+            } catch (e: OperationException) {
                 e.printStackTrace()
                 runError = true
                 errorMessage = e.message.toString()
@@ -91,6 +98,11 @@ class SignUpStepThreeFragment : Fragment() {
             super.onPostExecute(result)
             if (progressDialog.dialog.isShowing) progressDialog.dialog.dismiss()
             if (runError) showAlertDialog(errorMessage)
+            else {
+                val action =
+                    SignUpStepThreeFragmentDirections.fromSignUpToResult(phoneNumberInput, password)
+                findNavController().navigate(action)
+            }
         }
     }
 }

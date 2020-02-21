@@ -5,11 +5,13 @@ import android.content.Context
 import android.content.Intent
 import android.os.AsyncTask
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import cu.marilasoft.asrcubacel.lib.MCPortalCommunicator
+import androidx.fragment.app.Fragment
+import cu.marilasoft.asrcubacel.lib.Communicator
+import cu.marilasoft.asrcubacel.lib.SharedApp
+import cu.marilasoft.selibrary.MCPortal
 import cu.marilasoft.selibrary.utils.CommunicationException
 import cu.marilasoft.selibrary.utils.LoginException
 import java.security.KeyManagementException
@@ -20,7 +22,7 @@ import java.security.NoSuchAlgorithmException
  */
 class OperationResultFragment : Fragment() {
     lateinit var mContext: Context
-    lateinit var phoneNumber: String
+    lateinit var phoneNumberInput: String
     lateinit var password: String
 
     override fun onCreateView(
@@ -34,14 +36,15 @@ class OperationResultFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mContext = context as Context
-        phoneNumber = OperationResultFragmentArgs.fromBundle(arguments!!).phoneNumer
+        phoneNumberInput = OperationResultFragmentArgs.fromBundle(arguments!!).phoneNumer
         password = OperationResultFragmentArgs.fromBundle(arguments!!).password
         RunTask(mContext).execute()
     }
 
-    inner class RunTask(override var mContext: Context) : AsyncTask<Void?, Void?, Void?>(), MCPortalCommunicator {
+    inner class RunTask(override var mContext: Context) : AsyncTask<Void?, Void?, Void?>(),
+        Communicator, MCPortal {
         private val progressDialog = customProgressBar
-        lateinit var errorMessage: String
+        private lateinit var errorMessage: String
         private var runError = false
 
         override fun onPreExecute() {
@@ -52,7 +55,10 @@ class OperationResultFragment : Fragment() {
         override fun doInBackground(vararg params: Void?): Void? {
             try {
                 enableSSLSocket()
-                login(phoneNumber, password)
+                login(phoneNumberInput, password)
+                SharedApp.prefs.portalUser = cookies["portaluser"].toString()
+                SharedApp.prefs.urlMyAccount = urls["myAccount"].toString()
+                SharedApp.prefs.urlProducts = urls["products"].toString()
             } catch (e: KeyManagementException) {
                 e.printStackTrace()
             } catch (e2: NoSuchAlgorithmException) {

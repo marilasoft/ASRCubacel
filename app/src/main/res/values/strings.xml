@@ -62,4 +62,5 @@
     <string name="email">Correo Electronico</string>
     <string name="continue_string">Continuar</string>
     <string name="create_password">Create password</string>
+    <string name="updated">Updated</string>
 </resources>
